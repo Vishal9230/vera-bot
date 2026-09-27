@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbf8f4">
+  <title>Vera — your magicpin business assistant</title>
+  <style>
+    :root { color-scheme: light; --ink:#202321; --muted:#777b76; --green:#176e52; --green-dark:#115841; --paper:#fbf8f4; --line:#e9e5de; --white:#fff; }
+    * { box-sizing:border-box }
+    body { margin:0; background:var(--paper); color:var(--ink); font:15px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .shell { min-height:100vh; display:grid; grid-template-rows:auto 1fr; }
+    header { height:76px; padding:0 clamp(20px,6vw,88px); display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:rgba(255,255,255,.76); }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:650; letter-spacing:-.02em; }
+    .mark { display:grid; place-items:center; width:38px; height:38px; border-radius:13px; color:white; background:var(--green); font-family:Georgia,serif; font-size:23px; }
+    .brand small { display:block; color:var(--muted); font-weight:450; font-size:11px; letter-spacing:.02em; }
+    .status { display:flex; align-items:center; gap:8px; color:#657068; font-size:12px; }
+    .dot { width:8px; height:8px; border-radius:100%; background:#46a77b; box-shadow:0 0 0 3px #e4f2e9; }
+    main { width:min(100%,900px); margin:0 auto; padding:54px 22px 24px; display:flex; flex-direction:column; min-height:0; }
+    .intro { margin:0 auto 30px; max-width:590px; text-align:center; }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:.13em; font-size:10px; font-weight:700; }
+    h1 { margin:9px 0 8px; font-family:Georgia,"Times New Roman",serif; font-weight:500; letter-spacing:-.04em; font-size:clamp(32px,5vw,47px); }
+    .intro p { color:#737771; margin:0; }
+    .chat { width:min(100%,720px); margin:auto; flex:1; min-height:300px; max-height:calc(100vh - 365px); overflow:auto; padding:8px 4px 22px; display:flex; flex-direction:column; gap:15px; scroll-behavior:smooth; }
+    .message { display:flex; gap:10px; align-items:flex-end; max-width:88%; animation:rise .2s ease-out; }
+    .message.user { align-self:flex-end; flex-direction:row-reverse; }
+    .avatar { width:30px; height:30px; border-radius:11px; flex:none; display:grid; place-items:center; background:#e7eee9; color:var(--green); font-family:Georgia,serif; font-weight:700; }
+    .user .avatar { background:#eee8df; color:#65594d; font:600 11px sans-serif; }
+    .bubble { padding:12px 15px; border:1px solid var(--line); background:var(--white); border-radius:17px 17px 17px 5px; box-shadow:0 3px 12px #33210c08; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .user .bubble { background:var(--green); color:white; border-color:var(--green); border-radius:17px 17px 5px 17px; }
+    .suggestions { width:min(100%,720px); margin:0 auto 16px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
+    .suggestions button { padding:9px 13px; border:1px solid #d8e1da; background:transparent; color:#436151; border-radius:999px; font:inherit; font-size:12px; cursor:pointer; transition:.15s; }
+    .suggestions button:hover { background:#edf4ee; border-color:#abc5b2; }
+    .composer { width:min(100%,720px); margin:0 auto; padding:9px; display:flex; align-items:flex-end; gap:9px; background:white; border:1px solid #dfddd6; border-radius:18px; box-shadow:0 8px 28px #33210c0c; }
+    textarea { width:100%; max-height:130px; min-height:44px; resize:none; padding:11px 10px; border:0; outline:none; color:var(--ink); background:transparent; font:inherit; }
+    textarea::placeholder { color:#9a9c96; }
+    .send { width:43px; height:43px; flex:none; border:0; border-radius:13px; background:var(--green); color:white; display:grid; place-items:center; cursor:pointer; transition:background .15s,transform .15s; }
+    .send:hover { background:var(--green-dark); transform:translateY(-1px); }
+    .send:disabled { opacity:.55; cursor:wait; transform:none; }
+    .hint { margin:10px auto 0; text-align:center; font-size:11px; color:#92938e; }
+    .typing { color:#818780; font-size:13px; font-style:italic; }
+    @keyframes rise { from { opacity:0; transform:translateY(5px) } to { opacity:1; transform:translateY(0) } }
+    @media(max-width:600px) { header { height:66px; padding:0 18px } main { padding:35px 16px 18px } .intro { margin-bottom:22px } .chat { max-height:calc(100vh - 340px); min-height:260px } .message { max-width:94% } .status { font-size:0 } .status .dot { margin-right:4px } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><div class="mark">v</div><div>vera<small>MAGICPIN BUSINESS ASSISTANT</small></div></div>
+      <div class="status"><span class="dot"></span>Ready to help</div>
+    </header>
+    <main>
+      <section class="intro">
+        <div class="eyebrow">A little help for your business</div>
+        <h1>What can I help with?</h1>
+        <p>Get thoughtful ideas for your listing, reviews, offers, and customer conversations.</p>
+      </section>
+      <section class="chat" id="chat" aria-live="polite" aria-label="Conversation">
+        <div class="message"><div class="avatar">v</div><div class="bubble">Hi, I’m Vera. Tell me a little about your business or what you’d like help with today.</div></div>
+      </section>
+      <div class="suggestions" id="suggestions">
+        <button type="button">Improve my listing</button><button type="button">Reply to a review</button><button type="button">Plan an offer</button>
+      </div>
+      <form class="composer" id="form">
+        <textarea id="input" rows="1" maxlength="2000" placeholder="Message Vera…" aria-label="Message Vera"></textarea>
+        <button class="send" id="send" type="submit" aria-label="Send message"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12 20 4l-5.8 16-2.9-6.2L4 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m11.3 13.8 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </form>
+      <div class="hint">Vera can make mistakes. Please check important business details.</div>
+    </main>
+  </div>
+  <script>
+    const chat = document.querySelector('#chat');
+    const form = document.querySelector('#form');
+    const input = document.querySelector('#input');
+    const send = document.querySelector('#send');
+    const suggestions = document.querySelector('#suggestions');
+    const sessionKey = 'vera-chat-session';
+    let sessionId = sessionStorage.getItem(sessionKey);
+    if (!sessionId) { sessionId = crypto.randomUUID(); sessionStorage.setItem(sessionKey, sessionId); }
+    function addMessage(text, role) {
+      const row = document.createElement('div'); row.className = 'message ' + role;
+      const avatar = document.createElement('div'); avatar.className = 'avatar'; avatar.textContent = role === 'user' ? 'YOU' : 'v';
+      const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = text;
+      row.append(avatar, bubble); chat.append(row); chat.scrollTop = chat.scrollHeight; return row;
+    }
+    async function submitMessage(text) {
+      text = text.trim(); if (!text || send.disabled) return;
+      suggestions.hidden = true; addMessage(text, 'user'); input.value = ''; input.style.height = '44px'; send.disabled = true;
+      const pending = addMessage('Vera is thinking…', 'vera'); pending.querySelector('.bubble').classList.add('typing');
+      try {
+        const response = await fetch('/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({session_id:sessionId, message:text}) });
+        const data = await response.json(); if (!response.ok) throw new Error(data.detail || 'Please try again.');
+        pending.remove(); addMessage(data.reply, 'vera');
+      } catch (error) { pending.remove(); addMessage(error.message || 'I couldn’t connect just now. Please try again.', 'vera'); }
+      finally { send.disabled = false; input.focus(); }
+    }
+    form.addEventListener('submit', event => { event.preventDefault(); submitMessage(input.value); });
+    input.addEventListener('input', () => { input.style.height = '44px'; input.style.height = Math.min(input.scrollHeight, 130) + 'px'; });
+    input.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); } });
+    suggestions.addEventListener('click', event => { if (event.target.tagName === 'BUTTON') submitMessage(event.target.textContent); });
+  </script>
+</body>
+</html>
